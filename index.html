@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>the-pdf-wizard | Magic PDF Optimization</title>
+    <style>
+        :root {
+            --primary: #6d4aff;
+            --bg: #0f0f1a;
+            --card: #1a1a2e;
+            --text: #ffffff;
+            --text-dim: #a0a0b8;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 90%;
+            text-align: center;
+        }
+
+        h1 { font-size: 3rem; margin-bottom: 0.5rem; }
+        p { color: var(--text-dim); margin-bottom: 2rem; }
+
+        .drop-zone {
+            background: var(--card);
+            border: 2px dashed var(--primary);
+            border-radius: 16px;
+            padding: 60px 20px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .drop-zone:hover {
+            background: #252545;
+            transform: translateY(-2px);
+        }
+
+        .drop-zone.drag-over {
+            background: var(--primary);
+            border-color: white;
+        }
+
+        #file-input { display: none; }
+
+        .magic-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 2rem;
+            display: none;
+            width: 100%;
+            box-shadow: 0 4px 15px rgba(109, 74, 255, 0.4);
+        }
+
+        .magic-btn:hover { background: #5a39e0; }
+
+        .status {
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            color: var(--text-dim);
+        }
+
+        .footer {
+            margin-top: 3rem;
+            font-size: 0.8rem;
+            color: var(--text-dim);
+        }
+
+        a { color: var(--primary); text-decoration: none; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>🪄 the-pdf-wizard</h1>
+        <p>High-performance, zero-knowledge PDF magic. <br>Everything stays in your browser.</p>
+
+        <div class="drop-zone" id="drop-zone">
+            <span id="drop-text">Drop your heavy PDF here or click to browse</span>
+            <input type="file" id="file-input" accept=".pdf">
+        </div>
+
+        <button class="magic-btn" id="process-btn">Cast Optimization Spell ✨</button>
+        <div class="status" id="status"></div>
+
+        <div class="footer">
+            Powered by Rust + WebAssembly | 
+            <a href="https://github.com/brolookslikeanfish67-hub/the-pdf-wizard">GitHub Source</a>
+        </div>
+    </div>
+
+    <script type="module">
+        // Import the WASM glue code
+        import init, { process_pdf_wasm } from './pkg/the_pdf_wizard.js';
+
+        const dropZone = document.getElementById('drop-zone');
+        const fileInput = document.getElementById('file-input');
+        const processBtn = document.getElementById('process-btn');
+        const status = document.getElementById('status');
+        const dropText = document.getElementById('drop-text');
+
+        let selectedFile = null;
+
+        // Initialize the WASM module
+        async function start() {
+            try {
+                await init();
+                console.log("WASM Magic Initialized");
+            } catch (e) {
+                console.error("WASM failed to load", e);
+            }
+        }
+        start();
+
+        // Drag and Drop Logic
+        dropZone.addEventListener('click', () => fileInput.click());
+
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('drag-over');
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('drag-over');
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('drag-over');
+            handleFile(e.dataTransfer.files[0]);
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            handleFile(e.target.files[0]);
+        });
+
+        function handleFile(file) {
+            if (file && file.type === "application/pdf") {
+                selectedFile = file;
+                dropText.innerText = `Ready to wizardify: ${file.name}`;
+                processBtn.style.display = 'block';
+            } else {
+                alert("Please upload a valid PDF file.");
+            }
+        }
+
+        // Processing Logic
+        processBtn.addEventListener('click', async () => {
+            if (!selectedFile) return;
+
+            status.innerText = "Conjuring magic (processing locally)...";
+            processBtn.disabled = true;
+
+            const startTime = performance.now();
+            
+            const arrayBuffer = await selectedFile.arrayBuffer();
+            const uint8Array = new Uint8Array(arrayBuffer);
+
+            try {
+                // Call the Rust WASM function
+                const result = process_pdf_wasm(uint8Array);
+                
+                const endTime = performance.now();
+                const timeTaken = ((endTime - startTime) / 1000).toFixed(2);
+
+                // Create download link
+                const blob = new Blob([result], { type: 'application/pdf' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `wizard-${selectedFile.name}`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+
+                status.innerText = `Done in ${timeTaken}s! Check your downloads.`;
+            } catch (err) {
+                status.innerText = "The magic failed. Is the PDF encrypted?";
+                console.error(err);
+            } finally {
+                processBtn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>

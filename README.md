@@ -2,7 +2,7 @@
 
 [![Rust](https://img.shields.io/badge/language-Rust-orange.svg)](https://www.rust-lang.org/)
 [![GitHub Repo](https://img.shields.io/badge/Source-GitHub-black?logo=github)](https://github.com/brolookslikeanfish67-hub/the-pdf-wizard)
-[![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg)](https://github.com/brolookslikeanfish67-hub/the-pdf-wizard/blob/main/LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT))
 [![WASM](https://img.shields.io/badge/Runtime-WebAssembly-blueviolet.svg)](#wasm-setup)
 [![CLI](https://img.shields.io/badge/Tool-CLI-green.svg)](#cli-setup)
 

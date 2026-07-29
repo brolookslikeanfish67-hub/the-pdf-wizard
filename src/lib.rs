@@ -6,7 +6,6 @@ use wasm_bindgen::prelude::*;
 pub struct PdfWizard;
 
 impl PdfWizard {
-    /// Deep Optimization: Compresses all streams in parallel using all CPU cores.
     pub fn optimize(mut doc: Document) -> Result<Document> {
         doc.objects.par_iter_mut().for_each(|(_, obj)| {
             if let Object::Stream(ref mut stream) = obj {
@@ -19,12 +18,8 @@ impl PdfWizard {
         Ok(doc)
     }
 
-    /// Ghost Mode: Strips all metadata, author info, and producer tags.
     pub fn scrub_metadata(mut doc: Document) -> Result<Document> {
-        // Remove the Info dictionary (Author, Creator, etc.)
         doc.trailer.remove(b"Info");
-        
-        // Remove Metadata stream from the Catalog
         if let Ok(catalog_id) = doc.catalog() {
             if let Ok(catalog) = doc.get_object_mut(catalog_id) {
                 if let Object::Dictionary(ref mut dict) = catalog {
@@ -35,7 +30,6 @@ impl PdfWizard {
         Ok(doc)
     }
 
-    /// Secure Redaction: Physically wipes target text from the binary stream.
     pub fn redact(mut doc: Document, target: &str) -> Result<Document> {
         doc.objects.par_iter_mut().for_each(|(_, obj)| {
             if let Object::Stream(ref mut stream) = obj {
@@ -59,7 +53,6 @@ impl PdfWizard {
     }
 }
 
-// WASM Entry point for Browser usage
 #[wasm_bindgen]
 pub fn process_pdf_wasm(file_bits: &[u8]) -> Vec<u8> {
     let doc = Document::load_mem(file_bits).unwrap();

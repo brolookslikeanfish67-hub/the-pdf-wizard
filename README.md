@@ -1,32 +1,57 @@
-#  the-pdf-wizard 
+#  the-pdf-wizard
 
-**A high-performance, zero-knowledge PDF manipulation engine built in Rust.**
+[![Rust](https://img.shields.io/badge/language-Rust-orange.svg)](https://www.rust-lang.org/)
+[![GitHub Repo](https://img.shields.io/badge/Source-GitHub-black?logo=github)](https://github.com/brolookslikeanfish67-hub/the-pdf-wizard)
+[![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg)](https://github.com/brolookslikeanfish67-hub/the-pdf-wizard/blob/main/LICENSE)
+[![WASM](https://img.shields.io/badge/Runtime-WebAssembly-blueviolet.svg)](#wasm-setup)
+[![CLI](https://img.shields.io/badge/Tool-CLI-green.svg)](#cli-setup)
 
-[![Rust](https://img.shields.io/badge/Language-Rust-orange?logo=rust)](https://www.rust-lang.org/)
-[![WASM](https://img.shields.io/badge/Platform-WebAssembly-blueviolet?logo=webassembly)](#)
-[![License](https://img.shields.io/badge/License-AGPL_v3-blue.svg)](https://github.com/brolookslikeanfish67-hub/the-pdf-wizard/blob/main/LICENSE)
-[![Repo](https://img.shields.io/badge/GitHub-Repository-black?logo=github)](https://github.com/brolookslikeanfish67-hub/the-pdf-wizard)
+**A high-performance Rust library and CLI tool for parsing, editing, and manipulating PDF files.**  
+Built with `lopdf`, `rayon`, and `wasm-bindgen` for zero-copy, multi-core, privacy-first PDF engineering.
 
-> **Stop using bloated, slow, and insecure PDF editors.** 
-> `the-pdf-wizard` is an enterprise-grade, memory-safe toolkit that compiles to native machine code and WebAssembly. It processes gigabyte-scale PDFs in milliseconds, entirely locally.
-
----
-
-##  Why the Wizard?
-
-- ** Blazing Fast:** Multi-core parallel optimization using the `Rayon` engine.
-- ** Secure Redaction:** Physically removes text bytes from the source binary (no black-box overlays).
-- ** Ghost Mode:** Strips all metadata, authoring history, and tracking tags for total privacy.
-- ** Zero-Knowledge Web UI:** Powered by WASM. Edit PDFs directly in your browser—**zero data ever leaves your machine.**
-- ** Memory Safe:** 100% Rust, protecting against buffer overflows and malicious "binary-bomb" PDFs.
+>  **Live Project:** [https://github.com/brolookslikeanfish67-hub/the-pdf-wizard](https://github.com/brolookslikeanfish67-hub/the-pdf-wizard)
 
 ---
 
-##  Prerequisites
+##  Why this exists
 
-Before setting up the project, ensure you have the following installed:
+Legacy PDF editors are built on 30-year-old C++ architectures. They load entire files into RAM, crash on "binary-bomb" PDFs, and hide your data behind black-box cloud servers.
 
-1. **Rust & Cargo:** [Install via rustup](https://rustup.rs/)
-2. **wasm-pack:** The Rust-to-WebAssembly compiler.
-   ```bash
-   cargo install wasm-pack
+**the-pdf-wizard** solves this with:
+- **Memory-mapped, parallel stream processing** (Rust + Rayon)
+- **Physical Secure Redaction** (bytes are overwritten, not just covered)
+- **Ghost Mode** (metadata, author history, and GPS tags are stripped)
+- **Zero-Knowledge WASM Core** (the engine runs in your browser; nothing leaves your machine)
+
+---
+
+## 🌟 Features
+
+| Feature | Description |
+|---------|-------------|
+|  **Parallel Optimization** | Multi-threaded `FlateDecode` compression via Rayon |
+|  **Secure Redaction** | Physically wipes target text from the binary stream |
+|  **Ghost Mode** | Strips `Info` dictionary, `Metadata`, Producer, and Author tags |
+|  **WASM Native** | Compile the Rust core to WebAssembly for instant browser editing |
+|  **Memory Safe** | 100% Rust—no buffer overflows, no segfaults, no "binary bombs" |
+|  **Incremental Updates** | Uses `doc.compress()` to rebuild XRef tables for instant loading |
+
+---
+
+##  Setup Guide
+
+### Prerequisites
+
+| Tool | Version | Install Command |
+|------|---------|-----------------|
+| Rust | 1.70+ | [rustup.rs](https://rustup.rs) |
+| `wasm-pack` | latest | `cargo install wasm-pack` |
+| Python (optional) | 3.x | `python -m venv` (for local server) |
+
+---
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/brolookslikeanfish67-hub/the-pdf-wizard.git
+cd the-pdf-wizard

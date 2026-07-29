@@ -2,8 +2,10 @@
 name = "the-pdf-wizard"
 version = "0.1.0"
 edition = "2026"
-authors = ["ryen stuff yt"]
+authors = ["brolookslikeanfish67-hub"]
 description = "A high-performance Rust library and CLI tool for parsing, editing, and manipulating PDF files."
+repository = "https://github.com/brolookslikeanfish67-hub/the-pdf-wizard"
+license = "AGPL-3.0"
 
 [lib]
 crate-type = ["cdylib", "rlib"]
